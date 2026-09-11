@@ -1,106 +1,67 @@
-// src/App.jsx
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, Link } from "react-router-dom";
-import AttendanceSession from "./pages/AttendanceSession";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminAttendance from "./pages/AdminAttendance";
-import AdminSessions from "./pages/AdminSessions";
-import AdminQR from "./pages/AdminQR";
-import RequireAuth from "./components/RequireAuth";
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import RequireAuth from './routes/RequireAuth';
+import AdminLayout from './layouts/AdminLayout';
+import LoadingSpinner from './components/ui/LoadingSpinner';
 
-function App() {
+// Lazy-load pages for better performance
+const AttendanceSession = lazy(() => import('./pages/attendance/AttendanceSession'));
+const AdminLogin = lazy(() => import('./pages/auth/AdminLogin'));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminAttendance = lazy(() => import('./pages/admin/AdminAttendance'));
+const AdminSessions = lazy(() => import('./pages/admin/AdminSessions'));
+const AdminSessionDetail = lazy(() => import('./pages/admin/AdminSessionDetail'));
+const AdminQR = lazy(() => import('./pages/admin/AdminQR'));
+const AdminSettings = lazy(() => import('./pages/admin/AdminSettings'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+
+function PageLoader() {
   return (
-    <Router>
-      <Routes>
-        {/* Public attendee check-in page */}
-        <Route path="/attendance/session/:sessionId" element={<AttendanceSession />} />
-
-        {/* Public Admin Login */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-
-        {/* Protected Admin Routes */}
-        <Route
-          path="/admin/dashboard"
-          element={
-            <RequireAuth>
-              <AdminDashboard />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/admin/attendance"
-          element={
-            <RequireAuth>
-              <AdminAttendance />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/admin/sessions"
-          element={
-            <RequireAuth>
-              <AdminSessions />
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/admin/qr"
-          element={
-            <RequireAuth>
-              <AdminQR />
-            </RequireAuth>
-          }
-        />
-
-        {/* Root landing page */}
-        <Route
-          path="/"
-          element={
-            <div className="container mt-4 text-center">
-              <h1>Youth Community Attendance</h1>
-              <p style={{ color: "#4b5563" }}>Pilih menu untuk melanjutkan prototype:</p>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1.5rem" }}>
-                <Link
-                  to="/attendance/session/session-1"
-                  style={{
-                    padding: "1rem",
-                    background: "#4f46e5",
-                    color: "#ffffff",
-                    borderRadius: "0.5rem",
-                    textDecoration: "none",
-                    fontWeight: 600,
-                    fontSize: "1.1rem"
-                  }}
-                >
-                  📱 Halaman Presensi Peserta (Guest Scan)
-                </Link>
-
-                <Link
-                  to="/admin/login"
-                  style={{
-                    padding: "1rem",
-                    background: "#1e293b",
-                    color: "#ffffff",
-                    borderRadius: "0.5rem",
-                    textDecoration: "none",
-                    fontWeight: 600,
-                    fontSize: "1.1rem"
-                  }}
-                >
-                  ⚡ Portal Admin (Cek Data Real-time & QR)
-                </Link>
-              </div>
-            </div>
-          }
-        />
-
-        {/* Catch-all redirect to root */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '60vh',
+    }}>
+      <LoadingSpinner size="lg" />
+    </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        {/* Landing - redirect to admin */}
+        <Route path="/" element={<Navigate to="/admin/login" replace />} />
+
+        {/* Public attendance route */}
+        <Route path="/attendance/session/:sessionId" element={<AttendanceSession />} />
+
+        {/* Admin auth */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+
+        {/* Protected admin routes */}
+        <Route
+          path="/admin"
+          element={
+            <RequireAuth>
+              <AdminLayout />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="attendance" element={<AdminAttendance />} />
+          <Route path="sessions" element={<AdminSessions />} />
+          <Route path="sessions/:sessionId" element={<AdminSessionDetail />} />
+          <Route path="qr" element={<AdminQR />} />
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
+
+        {/* 404 */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Suspense>
+  );
+}

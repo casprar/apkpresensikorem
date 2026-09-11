@@ -1,16 +1,24 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./index.css";
-import { AuthProvider } from "./context/AuthContext";
-import { LocaleProvider } from "./context/LocaleContext";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './hooks/useAuth';
+import { LanguageProvider } from './context/LanguageContext';
+import ErrorBoundary from './components/common/ErrorBoundary';
+import App from './App';
+import './styles/global.css';
+import './styles/print.css';
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <AuthProvider>
-      <LocaleProvider locale="id">
-        <App />
-      </LocaleProvider>
-    </AuthProvider>
-  </React.StrictMode>
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <ErrorBoundary>
+      <LanguageProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </BrowserRouter>
+      </LanguageProvider>
+    </ErrorBoundary>
+  </StrictMode>
 );
+

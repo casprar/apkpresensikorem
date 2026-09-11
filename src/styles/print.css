@@ -1,0 +1,96 @@
+/* ============================================
+   KOREM GKI Pamulang — Print Styles
+   ============================================ */
+
+@media print {
+  /* Hide navigation, sidebar, unnecessary UI */
+  .admin-sidebar,
+  .admin-navbar,
+  .admin-header-actions,
+  .no-print,
+  nav,
+  footer,
+  .toast-container {
+    display: none !important;
+  }
+
+  /* Reset backgrounds */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+
+  /* Remove shadows and borders for clean print */
+  .card,
+  .stat-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+
+  /* QR Code print optimization */
+  .qr-print-container {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2cm;
+    page-break-inside: avoid;
+  }
+
+  .qr-print-container .qr-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 20px;
+  }
+
+  .qr-print-container .qr-session-name {
+    font-size: 24pt;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .qr-print-container .qr-session-date {
+    font-size: 14pt;
+    color: #333;
+    margin-bottom: 4px;
+  }
+
+  .qr-print-container .qr-session-time {
+    font-size: 12pt;
+    color: #555;
+    margin-bottom: 24px;
+  }
+
+  .qr-print-container canvas,
+  .qr-print-container img {
+    width: 300px !important;
+    height: 300px !important;
+    margin-bottom: 24px;
+  }
+
+  .qr-print-container .qr-scan-label {
+    font-size: 16pt;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  /* Ensure links don't break layout */
+  a {
+    color: black !important;
+    text-decoration: none !important;
+  }
+
+  /* Attendance table print */
+  .attendance-table {
+    font-size: 10pt;
+  }
+
+  .attendance-table th,
+  .attendance-table td {
+    padding: 6px 8px !important;
+    border: 1px solid #ccc !important;
+  }
+}
