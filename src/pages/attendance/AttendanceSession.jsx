@@ -324,8 +324,17 @@ const AttendanceSession = () => {
         case SUBMISSION_STATUS.SESSION_NOT_FOUND:
           setView('not-found');
           break;
+        case SUBMISSION_STATUS.INVALID_CLASS:
+          setSubmitError('Pilihan kelas tidak valid. Silakan pilih kelas 7 - 12.');
+          break;
+        case SUBMISSION_STATUS.INVALID_GENDER:
+          setSubmitError('Pilihan jenis kelamin tidak valid.');
+          break;
+        case SUBMISSION_STATUS.INVALID_NAME:
+          setSubmitError('Nama lengkap minimal 2 karakter.');
+          break;
         default:
-          setSubmitError(result.message || 'An error occurred while submitting attendance.');
+          setSubmitError(result.message || 'Gagal menyimpan presensi. Silakan coba lagi.');
           break;
       }
     } catch (error) {

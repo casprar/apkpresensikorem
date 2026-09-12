@@ -1,3 +1,5 @@
+-- Migration 006: Allow both 'Kelas 7'-'Kelas 12' and 'Grade 7'-'Grade 12' in submit_attendance RPC
+
 CREATE OR REPLACE FUNCTION submit_attendance(
     p_session_id UUID,
     p_name TEXT,
@@ -28,7 +30,7 @@ BEGIN
         RETURN jsonb_build_object('status', 'SESSION_CLOSED');
     END IF;
 
-    -- Validate class_name
+    -- Validate class_name (allow both 'Kelas X' and 'Grade X')
     IF p_class_name NOT IN (
         'Kelas 7', 'Kelas 8', 'Kelas 9', 'Kelas 10', 'Kelas 11', 'Kelas 12',
         'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'
@@ -78,37 +80,5 @@ BEGIN
 END;
 $$;
 
--- Grant EXECUTE to anon and authenticated
 GRANT EXECUTE ON FUNCTION submit_attendance(UUID, TEXT, TEXT, TEXT) TO anon;
 GRANT EXECUTE ON FUNCTION submit_attendance(UUID, TEXT, TEXT, TEXT) TO authenticated;
-
--- Function to get session for attendance
-CREATE OR REPLACE FUNCTION get_session_for_attendance(
-    p_session_id UUID
-) RETURNS TABLE (
-    session_name TEXT,
-    session_date DATE,
-    session_start_time TIME,
-    session_end_time TIME,
-    session_status TEXT
-)
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT 
-        name,
-        date,
-        start_time,
-        end_time,
-        status
-    FROM sessions
-    WHERE id = p_session_id;
-END;
-$$;
-
--- Grant EXECUTE to anon
-GRANT EXECUTE ON FUNCTION get_session_for_attendance(UUID) TO anon;
-GRANT EXECUTE ON FUNCTION get_session_for_attendance(UUID) TO authenticated;
