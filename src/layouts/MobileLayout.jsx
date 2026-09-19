@@ -45,7 +45,7 @@ export default function MobileLayout({ children }) {
         {/* Footer */}
         <footer style={styles.footer}>
           <p style={styles.footerText}>Komisi Remaja GKI Pamulang</p>
-          <p style={styles.footerSubtext}>"Bertumbuh bersama dalam iman, kasih, dan persekutuan."</p>
+          <p style={styles.footerSubtext}>"Setia Melayani"</p>
         </footer>
       </div>
     </div>
