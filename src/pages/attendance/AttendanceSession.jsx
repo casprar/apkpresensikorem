@@ -7,7 +7,7 @@ import { formatDate, formatTime, formatTimestampToJakarta } from '../../utils/da
 import { SUBMISSION_STATUS, CLASS_OPTIONS } from '../../constants/classOptions';
 import MobileLayout from '../../layouts/MobileLayout';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import { CheckCircle, AlertTriangle, Clock, AlertCircle, User, GraduationCap, Heart, Check, Calendar } from 'lucide-react';
+import { CheckCircle, AlertTriangle, Clock, AlertCircle, User, GraduationCap, Heart, Check, Calendar, ArrowRight, BookOpen } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
 const styles = {
@@ -18,9 +18,104 @@ const styles = {
     gap: '20px',
   },
 
-  /* ── Section 9: Session Event Poster Card ── */
+  /* ── 1. Bible Verse Devotional Popup Styles ── */
+  devotionalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(44, 48, 62, 0.45)',
+    backdropFilter: 'blur(4px)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px',
+    zIndex: 999,
+  },
+  devotionalCard: {
+    backgroundColor: '#FFFDF9',
+    borderRadius: '20px',
+    padding: '28px 24px',
+    maxWidth: '380px',
+    width: '100%',
+    border: '2px solid #E2DCD3',
+    boxShadow: '0 12px 32px rgba(44, 48, 62, 0.15)',
+    textAlign: 'center',
+    position: 'relative',
+    backgroundImage: 'radial-gradient(#E2DACD 0.75px, transparent 0.75px)',
+    backgroundSize: '16px 16px',
+  },
+  devotionalTag: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    backgroundColor: '#EDE8F5',
+    color: '#6B5E82',
+    padding: '5px 14px',
+    borderRadius: '20px',
+    fontSize: '11px',
+    fontWeight: '700',
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    marginBottom: '16px',
+    border: '1px solid #DED6E8',
+  },
+  devotionalTitle: {
+    fontSize: '19px',
+    fontWeight: '700',
+    color: '#2C303E',
+    marginBottom: '14px',
+  },
+  devotionalQuoteBox: {
+    backgroundColor: '#F7F4EE',
+    borderRadius: '14px',
+    padding: '16px 18px',
+    borderLeft: '3px solid #8E83A3',
+    marginBottom: '16px',
+    textAlign: 'left',
+  },
+  devotionalQuoteText: {
+    fontSize: '15px',
+    fontStyle: 'italic',
+    color: '#3E4454',
+    lineHeight: '1.6',
+    margin: '0 0 8px 0',
+  },
+  devotionalQuoteRef: {
+    fontSize: '12px',
+    fontWeight: '700',
+    color: '#6E7585',
+    margin: 0,
+    textAlign: 'right',
+  },
+  devotionalClosing: {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: '#8E83A3',
+    marginBottom: '20px',
+    fontFamily: "'Lora', Georgia, serif",
+  },
+  devotionalDismissBtn: {
+    width: '100%',
+    height: '46px',
+    borderRadius: '12px',
+    backgroundColor: '#5C7463', // Soft Muted Sage
+    color: '#FFFFFF',
+    fontSize: '14px',
+    fontWeight: '700',
+    border: 'none',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    letterSpacing: '0.01em',
+  },
+
+  /* ── 5. Session Event Poster Card ── */
   sessionPoster: {
-    backgroundColor: '#EDE8F5', // Dusty Lavender soft pastel paper panel
+    backgroundColor: '#EDE8F5',
     borderRadius: '16px',
     padding: '20px 22px',
     border: '1.5px solid #DDD6E8',
@@ -40,7 +135,6 @@ const styles = {
     color: '#6B5E82',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
-    fontFamily: "'Plus Jakarta Sans', sans-serif",
   },
   posterTitle: {
     fontSize: '20px',
@@ -62,7 +156,7 @@ const styles = {
     border: '1px solid #E2DCEB',
   },
 
-  /* ── Section 10: Form Registration Card ── */
+  /* ── 6. Form Registration Card ── */
   formCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: '16px',
@@ -123,6 +217,7 @@ const styles = {
     color: '#2C303E',
     boxSizing: 'border-box',
     outline: 'none',
+    transition: 'border-color 0.2s ease',
   },
   select: {
     width: '100%',
@@ -138,9 +233,10 @@ const styles = {
     outline: 'none',
     appearance: 'none',
     cursor: 'pointer',
+    transition: 'border-color 0.2s ease',
   },
 
-  /* ── Section 4: Gender Muted Pastel Palette ── */
+  /* ── Gender Muted Pastel Palette ── */
   genderContainer: {
     display: 'flex',
     gap: '10px',
@@ -159,13 +255,14 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: '6px',
+    transition: 'transform 0.15s ease, background-color 0.15s ease',
   },
   genderBtnMaleActive: {
     flex: 1,
     height: '46px',
     borderRadius: '10px',
     border: 'none',
-    backgroundColor: '#5B7B9A', // Soft Muted Powder Blue
+    backgroundColor: '#5B7B9A',
     color: '#FFFFFF',
     fontSize: '14px',
     fontWeight: '700',
@@ -174,13 +271,14 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: '6px',
+    transform: 'scale(1.02)',
   },
   genderBtnFemaleActive: {
     flex: 1,
     height: '46px',
     borderRadius: '10px',
     border: 'none',
-    backgroundColor: '#C87B8A', // Soft Muted Dusty Rose
+    backgroundColor: '#C87B8A',
     color: '#FFFFFF',
     fontSize: '14px',
     fontWeight: '700',
@@ -189,6 +287,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: '6px',
+    transform: 'scale(1.02)',
   },
 
   errorText: {
@@ -201,12 +300,12 @@ const styles = {
     gap: '6px',
   },
 
-  /* ── Section 11: Button (Muted Terracotta / Solid Color) ── */
+  /* ── 7. Submit Button ── */
   submitBtn: {
     width: '100%',
     height: '50px',
     borderRadius: '12px',
-    backgroundColor: '#C87A68', // Muted Terracotta
+    backgroundColor: '#C87A68',
     color: '#FFFFFF',
     fontSize: '15px',
     fontWeight: '700',
@@ -218,13 +317,14 @@ const styles = {
     gap: '8px',
     marginTop: '8px',
     letterSpacing: '0.01em',
+    transition: 'transform 0.15s ease',
   },
   submitBtnDisabled: {
     opacity: 0.6,
     cursor: 'not-allowed',
   },
 
-  /* ── States: Success / Duplicate / Closed ── */
+  /* ── 8. Successful Attendance Celebration ── */
   viewContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -276,7 +376,7 @@ const styles = {
     fontSize: '14px',
     color: '#5E6578',
     marginBottom: '22px',
-    lineHeight: '1.5',
+    lineHeight: '1.55',
   },
   detailsBox: {
     backgroundColor: '#F9F6F0',
@@ -312,7 +412,7 @@ const styles = {
     width: '100%',
     height: '48px',
     borderRadius: '10px',
-    backgroundColor: '#5C7463', // Muted Deep Sage
+    backgroundColor: '#5C7463',
     color: '#FFFFFF',
     fontSize: '14px',
     fontWeight: '700',
@@ -352,6 +452,10 @@ const AttendanceSession = () => {
   const [attendeeInfo, setAttendeeInfo] = useState(null);
   const [submitError, setSubmitError] = useState('');
 
+  /* Devotional Opening Popup State */
+  const [showDevotional, setShowDevotional] = useState(true);
+  const [devotionalExiting, setDevotionalExiting] = useState(false);
+
   useEffect(() => {
     const fetchSession = async () => {
       try {
@@ -379,6 +483,13 @@ const AttendanceSession = () => {
       fetchSession();
     }
   }, [sessionId]);
+
+  const dismissDevotional = () => {
+    setDevotionalExiting(true);
+    setTimeout(() => {
+      setShowDevotional(false);
+    }, 450);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -467,17 +578,70 @@ const AttendanceSession = () => {
 
   return (
     <MobileLayout>
+      {/* ── 1. Bible Verse Opening Popup Card ("Firman Hari Ini") ── */}
+      {showDevotional && (
+        <div 
+          style={styles.devotionalOverlay}
+          className={devotionalExiting ? 'animate-dev-exit' : ''}
+          onClick={dismissDevotional}
+        >
+          <div 
+            style={styles.devotionalCard} 
+            className="animate-dev-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Hand-drawn botanical & star SVG motif */}
+            <div style={{ position: 'absolute', top: '14px', right: '16px' }} className="animate-star-fade">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 2L11.8 7.2L17 9L11.8 10.8L10 16L8.2 10.8L3 9L8.2 7.2L10 2Z" fill="#D9AB55" opacity="0.75"/>
+              </svg>
+            </div>
+            
+            <div style={{ position: 'absolute', bottom: '16px', left: '16px' }} className="animate-leaf-sway">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21C12 21 7 16 7 11C7 8.24 9.24 6 12 6C14.76 6 17 8.24 17 11C17 16 12 21 12 21Z" stroke="#698272" strokeWidth="1.5" opacity="0.6"/>
+              </svg>
+            </div>
+
+            <div style={styles.devotionalTag}>
+              <BookOpen size={12} /> Firman Hari Ini
+            </div>
+            
+            <h3 style={styles.devotionalTitle} className="serif-font">Renungan Remaja</h3>
+
+            <div style={styles.devotionalQuoteBox} className="animate-dev-text">
+              <p style={styles.devotionalQuoteText}>
+                “Hendaklah kamu saling mengasihi, seperti Aku telah mengasihi kamu.”
+              </p>
+              <p style={styles.devotionalQuoteRef}>— Yohanes 15:12</p>
+            </div>
+
+            <p style={styles.devotionalClosing}>Selamat beribadah ♡</p>
+
+            <button 
+              type="button" 
+              onClick={dismissDevotional} 
+              style={styles.devotionalDismissBtn}
+            >
+              Masuk ke Presensi <ArrowRight size={15} />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div style={styles.container}>
         
         {view === 'form' && session && (
           <>
-            {/* Section 9: Session Event Poster Card */}
-            <div style={styles.sessionPoster}>
+            {/* 5. Session Event Poster Card */}
+            <div style={styles.sessionPoster} className="animate-entrance-stagger-2">
               <div style={styles.posterHeader}>
                 <span style={styles.posterCategory}>Warta Remaja</span>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 3V21M3 12H21" stroke="#8E83A3" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+                <div className="animate-leaf-sway">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3V21M3 12H21" stroke="#8E83A3" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </div>
               </div>
               <h2 style={styles.posterTitle} className="serif-font">{session.name}</h2>
               <div style={styles.posterMeta}>
@@ -486,8 +650,8 @@ const AttendanceSession = () => {
               </div>
             </div>
 
-            {/* Section 10: Registration Form Card */}
-            <div style={styles.formCard}>
+            {/* 6. Form Registration Card */}
+            <div style={styles.formCard} className="animate-entrance-stagger-3">
               <div style={styles.formHeader}>
                 <h3 style={styles.formHeaderTitle} className="serif-font">Formulir Presensi</h3>
                 <p style={styles.formHeaderSubtitle}>Silakan lengkapi data presensi kamu di bawah ini</p>
@@ -577,7 +741,7 @@ const AttendanceSession = () => {
                   </div>
                 )}
 
-                {/* Section 11: Muted Terracotta Submit Button */}
+                {/* 7. Submit Button */}
                 <button 
                   type="submit" 
                   style={{
@@ -593,16 +757,16 @@ const AttendanceSession = () => {
           </>
         )}
 
-        {/* Success State */}
+        {/* 8. Successful Attendance Celebration */}
         {view === 'success' && attendeeInfo && (
-          <div style={styles.viewContainer}>
-            <div style={{...styles.iconWrapper, ...styles.iconSuccess}}>
+          <div style={styles.viewContainer} className="animate-entrance">
+            <div style={{...styles.iconWrapper, ...styles.iconSuccess}} className="animate-checkmark">
               <CheckCircle size={38} />
             </div>
-            <h2 style={styles.viewTitle} className="serif-font">{t('successTitle')}</h2>
+            <h2 style={styles.viewTitle} className="serif-font">Kehadiranmu tercatat! ♡</h2>
             <p style={styles.viewText}>
               Terima kasih, <strong>{attendeeInfo.firstName}</strong>!<br/>
-              Presensi kamu telah tercatat untuk persekutuan hari ini.
+              Senang kamu hadir hari ini. Sampai bertemu di ibadah berikutnya!
             </p>
             
             <div style={styles.detailsBox}>
@@ -632,7 +796,7 @@ const AttendanceSession = () => {
 
         {/* Duplicate State */}
         {view === 'duplicate' && (
-          <div style={styles.viewContainer}>
+          <div style={styles.viewContainer} className="animate-entrance">
             <div style={{...styles.iconWrapper, ...styles.iconWarning}}>
               <AlertTriangle size={38} />
             </div>
@@ -647,7 +811,7 @@ const AttendanceSession = () => {
 
         {/* Closed State */}
         {view === 'closed' && (
-          <div style={styles.viewContainer}>
+          <div style={styles.viewContainer} className="animate-entrance">
             <div style={{...styles.iconWrapper, ...styles.iconClosed}}>
               <Clock size={38} />
             </div>
@@ -658,7 +822,7 @@ const AttendanceSession = () => {
 
         {/* Not Found State */}
         {view === 'not-found' && (
-          <div style={styles.viewContainer}>
+          <div style={styles.viewContainer} className="animate-entrance">
             <div style={{...styles.iconWrapper, ...styles.iconError}}>
               <AlertCircle size={38} />
             </div>
