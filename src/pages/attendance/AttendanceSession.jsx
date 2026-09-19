@@ -371,6 +371,24 @@ const styles = {
   }
 };
 
+const BIBLE_VERSES = [
+  { quote: '“Hendaklah kamu saling mengasihi, seperti Aku telah mengasihi kamu.”', ref: '— Yohanes 15:12' },
+  { quote: '“Jangan seorang pun menganggap engkau rendah karena engkau muda. Jadilah teladan bagi orang-orang percaya, dalam perkataanmu, dalam tingkah lakumu, dalam kasihmu, dalam kesetiaanmu dan dalam kesucianmu.”', ref: '— 1 Timotius 4:12' },
+  { quote: '“Firman-Mu itu pelita bagi kakiku dan terang bagi jalanku.”', ref: '— Mazmur 119:105' },
+  { quote: '“Sebab Aku mengetahui rancangan-rancangan apa yang ada pada-Ku mengenai kamu, yaitu rancangan damai sejahtera dan bukan rancangan kecelakaan, untuk memberikan kepadamu hari depan yang penuh harapan.”', ref: '— Yeremia 29:11' },
+  { quote: '“Segala perkara dapat kutanggung di dalam Dia yang memberi kekuatan kepadaku.”', ref: '— Filipi 4:13' },
+  { quote: '“Percayalah kepada TUHAN dengan segenap hatimu, dan janganlah bersandar kepada pengertianmu sendiri. Akuilah Dia dalam segala lakumu, maka Ia akan meluruskan jalanmu.”', ref: '— Amsal 3:5-6' },
+  { quote: '“Bersukacitalah dalam pengharapan, sabarlah dalam kesesakan, dan bertekunlah dalam doa!”', ref: '— Roma 12:12' },
+  { quote: '“Lakukanlah segala pekerjaanmu dalam kasih!”', ref: '— 1 Korintus 16:14' },
+  { quote: '“Janganlah kita jemu-jemu berbuat baik, karena apabila sudah tiba waktunya, kita akan menuai, jika kita tidak menjadi lemah.”', ref: '— Galatia 6:9' },
+  { quote: '“Sungguh, betapa baiknya dan betapa indahnya, apabila saudara-saudara diam bersama dengan rukun!”', ref: '— Mazmur 133:1' },
+  { quote: '“Apa pun juga yang kamu perbuat, perbuatlah dengan segenap hatimu seperti untuk Tuhan dan bukan untuk manusia.”', ref: '— Kolose 3:23' },
+  { quote: '“Demikianlah hendaknya terangmu bercahaya di depan orang, supaya mereka melihat perbuatanmu yang baik dan memuliakan Bapamu yang di sorga.”', ref: '— Matius 5:16' },
+  { quote: '“Tetapi hendaklah kamu ramah seorang terhadap yang lain, penuh kasih mesra dan saling mengampuni, sebagaimana Allah dalam Kristus telah mengampuni kamu.”', ref: '— Efesus 4:32' },
+  { quote: '“Sebab Allah memberikan kepada kita bukan roh ketakutan, melainkan roh yang membangkitkan kekuatan, kasih dan ketertiban.”', ref: '— 2 Timotius 1:7' },
+  { quote: '“Kuatkan dan teguhkanlah hatimu! Janganlah kecut dan tawar hati, sebab TUHAN, Allahmu, menyertai engkau, ke mana pun engkau pergi.”', ref: '— Yosua 1:9' }
+];
+
 const AttendanceSession = () => {
   const { sessionId } = useParams();
   const { t } = useLanguage();
@@ -386,6 +404,7 @@ const AttendanceSession = () => {
 
   /* Devotional Pop-up State (Triggered AFTER attendance submission) */
   const [showDevotionalPopup, setShowDevotionalPopup] = useState(false);
+  const [currentVerse, setCurrentVerse] = useState(BIBLE_VERSES[0]);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -453,6 +472,9 @@ const AttendanceSession = () => {
             timestamp: new Date()
           });
           setView('success');
+          // Pick a random Bible verse for the popup
+          const randomIndex = Math.floor(Math.random() * BIBLE_VERSES.length);
+          setCurrentVerse(BIBLE_VERSES[randomIndex]);
           // Trigger the devotional scripture popup AFTER successful submission
           setShowDevotionalPopup(true);
           break;
@@ -518,9 +540,9 @@ const AttendanceSession = () => {
 
             <div style={styles.devotionalQuoteBox}>
               <p style={styles.devotionalQuoteText}>
-                “Hendaklah kamu saling mengasihi, seperti Aku telah mengasihi kamu.”
+                {currentVerse.quote}
               </p>
-              <p style={styles.devotionalQuoteRef}>— Yohanes 15:12</p>
+              <p style={styles.devotionalQuoteRef}>{currentVerse.ref}</p>
             </div>
 
             <p style={styles.devotionalGreeting}>
