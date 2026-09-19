@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSession, closeSession } from '../../services/sessionService';
+import { getSession, closeSession, deleteSession } from '../../services/sessionService';
 import { getAttendance } from '../../services/attendanceService';
 import { formatDate, formatTime } from '../../utils/date';
+import { useLanguage } from '../../context/LanguageContext';
 import StatusIndicator from '../../components/ui/StatusIndicator';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import EmptyState from '../../components/ui/EmptyState';
-import { QrCode, XCircle, ArrowLeft, Users } from 'lucide-react';
+import { QrCode, XCircle, ArrowLeft, Users, Trash2 } from 'lucide-react';
 
 const AdminSessionDetail = () => {
   const { sessionId } = useParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [session, setSession] = useState(null);
   const [attendees, setAttendees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchSessionDetails();
@@ -50,6 +54,19 @@ const AdminSessionDetail = () => {
     }
   };
 
+  const handleDeleteSession = async () => {
+    setDeleting(true);
+    try {
+      await deleteSession(sessionId);
+      setIsDeleteModalOpen(false);
+      navigate('/admin/sessions');
+    } catch (err) {
+      alert('Failed to delete session: ' + (err.message || 'An error occurred'));
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '48px' }}><LoadingSpinner size="lg" /></div>;
   if (error) return <div style={{ padding: '24px', color: 'var(--error)' }}>Error: {error}</div>;
   if (!session) return <div style={{ padding: '24px' }}>Session not found.</div>;
@@ -79,13 +96,21 @@ const AdminSessionDetail = () => {
 
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <Button variant="outline" icon={<QrCode size={18} />} onClick={() => navigate(`/admin/qr?sessionId=${session.id}`)}>
-              Show QR Code
+              {t('qrCode')}
             </Button>
             {session.status === 'OPEN' && (
               <Button variant="danger" icon={<XCircle size={18} />} onClick={() => setIsCloseModalOpen(true)}>
-                Close Session
+                {t('closeSession')}
               </Button>
             )}
+            <Button 
+              variant="danger" 
+              icon={<Trash2 size={18} />} 
+              onClick={() => setIsDeleteModalOpen(true)}
+              style={{ backgroundColor: 'rgba(239, 68, 68, 0.12)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.25)' }}
+            >
+              {t('deleteSession')}
+            </Button>
           </div>
         </div>
 
@@ -107,8 +132,8 @@ const AdminSessionDetail = () => {
                       <thead>
                         <tr style={{ borderBottom: '2px solid var(--border-color)' }}>
                           <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: '600' }}>Name</th>
-                          <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: '600' }}>Class</th>
-                          <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: '600' }}>Gender</th>
+                          <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: '600' }}>{t('classLabel')}</th>
+                          <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: '600' }}>{t('genderLabel')}</th>
                           <th style={{ padding: '12px 8px', color: 'var(--text-muted)', fontWeight: '600' }}>Check-in Time</th>
                         </tr>
                       </thead>
@@ -116,8 +141,8 @@ const AdminSessionDetail = () => {
                         {safeAttendees.map(attendee => (
                           <tr key={attendee.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                             <td style={{ padding: '12px 8px', color: 'var(--text-main)', fontWeight: '500' }}>{attendee.name || attendee.youth_profiles?.full_name || 'Unknown'}</td>
-                            <td style={{ padding: '12px 8px', color: 'var(--text-main)' }}>{attendee.class_name || attendee.youth_profiles?.class_grade || 'Unknown'}</td>
-                            <td style={{ padding: '12px 8px', color: 'var(--text-main)' }}>{attendee.gender || attendee.youth_profiles?.gender || 'Unknown'}</td>
+                            <td style={{ padding: '12px 8px', color: 'var(--text-main)' }}>{t(attendee.class_name) || attendee.class_name || attendee.youth_profiles?.class_grade || 'Unknown'}</td>
+                            <td style={{ padding: '12px 8px', color: 'var(--text-main)' }}>{attendee.gender === 'MALE' ? t('male') : attendee.gender === 'FEMALE' ? t('female') : 'Unknown'}</td>
                             <td style={{ padding: '12px 8px', color: 'var(--text-main)' }}>{formatDate(attendee.created_at || attendee.check_in_time, true)}</td>
                           </tr>
                         ))}
@@ -131,14 +156,33 @@ const AdminSessionDetail = () => {
         </div>
       </div>
 
+      {/* Close Session Modal */}
       {isCloseModalOpen && (
-        <Modal title="Close Session" onClose={() => setIsCloseModalOpen(false)}>
+        <Modal title={t('closeSession')} onClose={() => setIsCloseModalOpen(false)}>
           <div style={{ marginBottom: '24px' }}>
             Are you sure you want to close this session? Once closed, no more attendance can be recorded.
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-            <Button variant="outline" onClick={() => setIsCloseModalOpen(false)}>Cancel</Button>
-            <Button variant="danger" onClick={handleCloseSession}>Yes, Close Session</Button>
+            <Button variant="outline" onClick={() => setIsCloseModalOpen(false)}>{t('cancel')}</Button>
+            <Button variant="danger" onClick={handleCloseSession}>{t('closeSession')}</Button>
+          </div>
+        </Modal>
+      )}
+
+      {/* Delete Session Modal */}
+      {isDeleteModalOpen && (
+        <Modal title={t('deleteSession')} onClose={() => setIsDeleteModalOpen(false)}>
+          <div style={{ marginBottom: '24px', lineHeight: '1.6' }}>
+            <p style={{ margin: '0 0 12px 0', fontSize: '15px' }}>
+              {t('deleteSessionConfirm')}
+            </p>
+            <div style={{ padding: '12px 16px', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px', color: '#DC2626', fontWeight: '500', fontSize: '14px' }}>
+              Session to delete: <strong>{session?.name}</strong> ({formatDate(session?.date)})
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+            <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)} disabled={deleting}>{t('cancel')}</Button>
+            <Button variant="danger" onClick={handleDeleteSession} loading={deleting}>{t('deleteSession')}</Button>
           </div>
         </Modal>
       )}

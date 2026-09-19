@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSessions, createSession, closeSession, deleteSession } from '../../services/sessionService';
 import { formatDate, formatTime, getTodayDateString } from '../../utils/date';
+import { useLanguage } from '../../context/LanguageContext';
 import StatusIndicator from '../../components/ui/StatusIndicator';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
@@ -11,11 +12,18 @@ import { Plus, QrCode, Eye, XCircle, CalendarDays, Trash2 } from 'lucide-react';
 
 const AdminSessions = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
   const [sessionToClose, setSessionToClose] = useState(null);
+  
+  // Delete modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [sessionToDelete, setSessionToDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
   const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
@@ -89,14 +97,34 @@ const AdminSessions = () => {
     setIsCloseModalOpen(true);
   };
 
+  const confirmDelete = (session) => {
+    setSessionToDelete(session);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteSession = async () => {
+    if (!sessionToDelete) return;
+    setDeleting(true);
+    try {
+      await deleteSession(sessionToDelete.id);
+      setIsDeleteModalOpen(false);
+      setSessionToDelete(null);
+      await fetchSessions();
+    } catch (err) {
+      alert('Failed to delete session: ' + (err.message || 'An error occurred'));
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '48px' }}><LoadingSpinner size="lg" /></div>;
 
   return (
     <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-        <h1 style={{ margin: 0, color: 'var(--text-main)', fontSize: '24px', fontWeight: 'bold' }}>Sessions</h1>
+        <h1 style={{ margin: 0, color: 'var(--text-main)', fontSize: '24px', fontWeight: 'bold' }}>{t('sessions')}</h1>
         <Button onClick={openCreateModal} icon={<Plus size={18} />}>
-          Create Session
+          {t('createSession')}
         </Button>
       </div>
 
@@ -123,31 +151,43 @@ const AdminSessions = () => {
                 <div style={{ display: 'flex', gap: '16px', color: 'var(--text-muted)', fontSize: '14px', flexWrap: 'wrap' }}>
                   <span>{formatDate(session.date)}</span>
                   <span>{session.startTime && formatTime(session.startTime)} - {session.endTime && formatTime(session.endTime) || 'N/A'}</span>
-                  <span style={{ fontWeight: '500', color: 'var(--primary)' }}>{session.attendanceCount || 0} attendees</span>
+                  <span style={{ fontWeight: '500', color: 'var(--primary)' }}>
+                    {Array.isArray(session.attendance) ? session.attendance[0]?.count || 0 : (session.attendanceCount || 0)} attendees
+                  </span>
                 </div>
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                 <StatusIndicator status={session.status} />
                 <Button variant="outline" size="sm" icon={<Eye size={16} />} onClick={() => navigate(`/admin/sessions/${session.id}`)}>
-                  View
+                  {t('viewDetails')}
                 </Button>
                 <Button variant="outline" size="sm" icon={<QrCode size={16} />} onClick={() => navigate(`/admin/qr?sessionId=${session.id}`)}>
-                  QR Code
+                  {t('qrCode')}
                 </Button>
                 {session.status === 'OPEN' && (
                   <Button variant="danger" size="sm" icon={<XCircle size={16} />} onClick={() => confirmClose(session)}>
-                    Close
+                    {t('closeSession')}
                   </Button>
                 )}
+                <Button 
+                  variant="danger" 
+                  size="sm" 
+                  icon={<Trash2 size={16} />} 
+                  onClick={() => confirmDelete(session)}
+                  style={{ backgroundColor: 'rgba(239, 68, 68, 0.12)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.25)' }}
+                >
+                  {t('delete')}
+                </Button>
               </div>
             </div>
           ))}
         </div>
       )}
 
+      {/* Create Session Modal */}
       {isCreateModalOpen && (
-        <Modal isOpen={true} title="Create New Session" onClose={() => setIsCreateModalOpen(false)}>
+        <Modal isOpen={true} title={t('createSession')} onClose={() => setIsCreateModalOpen(false)}>
           <form onSubmit={handleCreateSession} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {modalError && (
               <div style={{
@@ -162,7 +202,7 @@ const AdminSessions = () => {
               </div>
             )}
             <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }} htmlFor="session-name">Session Name</label>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }} htmlFor="session-name">{t('sessionName')}</label>
               <input 
                 id="session-name"
                 type="text" 
@@ -170,11 +210,11 @@ const AdminSessions = () => {
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                 style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-main)' }}
-                placeholder="e.g. Youth Service Week 1"
+                placeholder={t('sessionNamePlaceholder')}
               />
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }} htmlFor="session-date">Date</label>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }} htmlFor="session-date">{t('date')}</label>
               <input 
                 id="session-date"
                 type="date" 
@@ -186,7 +226,7 @@ const AdminSessions = () => {
             </div>
             <div style={{ display: 'flex', gap: '16px' }}>
               <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }} htmlFor="session-start-time">Start Time</label>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }} htmlFor="session-start-time">{t('startTime')}</label>
                 <input 
                   id="session-start-time"
                   type="time" 
@@ -196,7 +236,7 @@ const AdminSessions = () => {
                 />
               </div>
               <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }} htmlFor="session-end-time">End Time (Optional)</label>
+                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }} htmlFor="session-end-time">{t('endTime')}</label>
                 <input 
                   id="session-end-time"
                   type="time" 
@@ -207,22 +247,41 @@ const AdminSessions = () => {
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '16px' }}>
-              <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>Cancel</Button>
-              <Button type="submit" loading={submitting}>Create Session</Button>
+              <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>{t('cancel')}</Button>
+              <Button type="submit" loading={submitting}>{t('save')}</Button>
             </div>
           </form>
         </Modal>
       )}
 
+      {/* Close Session Modal */}
       {isCloseModalOpen && (
-        <Modal title="Close Session" onClose={() => setIsCloseModalOpen(false)}>
+        <Modal title={t('closeSession')} onClose={() => setIsCloseModalOpen(false)}>
           <div style={{ marginBottom: '24px' }}>
             Are you sure you want to close the session <strong>{sessionToClose?.name}</strong>? 
             Once closed, no more attendance can be recorded for this session.
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-            <Button variant="outline" onClick={() => setIsCloseModalOpen(false)}>Cancel</Button>
-            <Button variant="danger" onClick={handleCloseSession}>Yes, Close Session</Button>
+            <Button variant="outline" onClick={() => setIsCloseModalOpen(false)}>{t('cancel')}</Button>
+            <Button variant="danger" onClick={handleCloseSession}>{t('closeSession')}</Button>
+          </div>
+        </Modal>
+      )}
+
+      {/* Delete Session Modal */}
+      {isDeleteModalOpen && (
+        <Modal title={t('deleteSession')} onClose={() => setIsDeleteModalOpen(false)}>
+          <div style={{ marginBottom: '24px', lineHeight: '1.6' }}>
+            <p style={{ margin: '0 0 12px 0', fontSize: '15px' }}>
+              {t('deleteSessionConfirm')}
+            </p>
+            <div style={{ padding: '12px 16px', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px', color: '#DC2626', fontWeight: '500', fontSize: '14px' }}>
+              Session to delete: <strong>{sessionToDelete?.name}</strong> ({formatDate(sessionToDelete?.date)})
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+            <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)} disabled={deleting}>{t('cancel')}</Button>
+            <Button variant="danger" onClick={handleDeleteSession} loading={deleting}>{t('deleteSession')}</Button>
           </div>
         </Modal>
       )}
