@@ -12,30 +12,40 @@ export default function MobileLayout({ children }) {
   return (
     <div style={styles.wrapper}>
       <div style={styles.container}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', paddingHorizontal: '4px' }}>
-          <div style={styles.communityBadge}>
-            <span style={{ fontSize: '12px', fontWeight: '600', color: '#7C3AED', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              ✨ KOREM GKI Pamulang
-            </span>
+        {/* Top Header Bar */}
+        <div style={styles.topBar}>
+          <div style={styles.headerTag}>
+            <span style={styles.headerTagDot}></span>
+            <span>GKI Pamulang</span>
           </div>
           <LanguageSwitcher />
         </div>
 
+        {/* Editorial Church Bulletin Header */}
         <header style={styles.header}>
           <div style={styles.logoBadge}>
             <img src={koremLogo} alt="KOREM GKI Pamulang" style={styles.logo} />
           </div>
-          <h1 style={styles.title}>{t('attendanceTitle')}</h1>
-          <p style={styles.subtitle}>Selamat Datang Remaja Pamulang! 🕊️</p>
+          <h1 style={styles.title} className="serif-font">{t('attendanceTitle')}</h1>
+          <p style={styles.subtitle}>Komisi Remaja • Persekutuan & Presensi</p>
+          
+          {/* Subtle organic decorative line */}
+          <div style={styles.decorLine}>
+            <svg width="120" height="8" viewBox="0 0 120 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 4C20 1 40 7 60 4C80 1 100 7 118 4" stroke="#D1C7B7" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </div>
         </header>
 
+        {/* Main Content */}
         <main style={styles.main}>
           {children}
         </main>
 
+        {/* Footer */}
         <footer style={styles.footer}>
-          <p style={styles.footerText}>Komunitas Remaja GKI Pamulang</p>
-          <p style={{ fontSize: '11px', color: '#A1A1AA', marginTop: '2px' }}>Bersuka Cipta & Bertumbuh Bersama dalam Kasih</p>
+          <p style={styles.footerText}>Komisi Remaja GKI Pamulang</p>
+          <p style={styles.footerSubtext}>"Bertumbuh bersama dalam iman, kasih, dan persekutuan."</p>
         </footer>
       </div>
     </div>
@@ -46,7 +56,9 @@ const styles = {
   wrapper: {
     minHeight: '100vh',
     minHeight: '100dvh',
-    background: 'radial-gradient(circle at 50% -10%, rgba(225, 0, 120, 0.09) 0%, transparent 60%), radial-gradient(circle at 90% 40%, rgba(124, 58, 237, 0.07) 0%, transparent 50%), linear-gradient(165deg, #FAF8FC 0%, #F4EEFB 50%, #FFF5FA 100%)',
+    backgroundColor: '#F8F5EF',
+    backgroundImage: 'radial-gradient(#E2DACD 0.75px, transparent 0.75px)',
+    backgroundSize: '18px 18px',
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'center',
@@ -54,42 +66,59 @@ const styles = {
   },
   container: {
     width: '100%',
-    maxWidth: '460px',
+    maxWidth: '440px',
     display: 'flex',
     flexDirection: 'column',
     minHeight: '100vh',
     minHeight: '100dvh',
   },
-  communityBadge: {
-    backgroundColor: 'rgba(124, 58, 237, 0.08)',
-    padding: '6px 14px',
-    borderRadius: '20px',
-    border: '1px solid rgba(124, 58, 237, 0.15)',
+  topBar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: '20px',
+    paddingBottom: '8px',
+  },
+  headerTag: {
     display: 'inline-flex',
     alignItems: 'center',
+    gap: '6px',
+    backgroundColor: '#EFEAE1',
+    border: '1px solid #DED7CB',
+    padding: '5px 12px',
+    borderRadius: '20px',
+    fontSize: '11px',
+    fontWeight: '600',
+    color: '#5C6370',
+    letterSpacing: '0.03em',
+    textTransform: 'uppercase',
+  },
+  headerTagDot: {
+    width: '6px',
+    height: '6px',
+    borderRadius: '3px',
+    backgroundColor: '#8E83A3',
   },
   header: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    paddingTop: '20px',
-    paddingBottom: '4px',
+    paddingTop: '16px',
+    paddingBottom: '8px',
     textAlign: 'center',
   },
   logoBadge: {
-    width: 68,
-    height: 68,
-    borderRadius: '20px',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    backdropFilter: 'blur(10px)',
+    width: 58,
+    height: 58,
+    borderRadius: '16px',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E2DCD3',
+    boxShadow: '0 2px 8px rgba(44, 48, 62, 0.04)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '10px',
-    boxShadow: '0 10px 25px -5px rgba(124, 58, 237, 0.15), 0 4px 10px rgba(0, 0, 0, 0.03)',
-    border: '1px solid rgba(255, 255, 255, 0.8)',
-    marginBottom: '14px',
-    transition: 'transform 0.3s ease',
+    padding: '8px',
+    marginBottom: '12px',
   },
   logo: {
     width: '100%',
@@ -98,17 +127,22 @@ const styles = {
   },
   title: {
     fontSize: '22px',
-    fontWeight: '800',
-    color: '#1E1B4B',
-    letterSpacing: '-0.025em',
-    lineHeight: '1.25',
+    fontWeight: '700',
+    color: '#2C303E',
     marginBottom: '4px',
   },
   subtitle: {
-    fontSize: '13px',
+    fontSize: '12px',
     fontWeight: '500',
-    color: '#6B7280',
+    color: '#6E7585',
     margin: 0,
+    letterSpacing: '0.01em',
+  },
+  decorLine: {
+    marginTop: '10px',
+    display: 'flex',
+    justifyContent: 'center',
+    opacity: 0.8,
   },
   main: {
     flex: 1,
@@ -117,11 +151,19 @@ const styles = {
   },
   footer: {
     textAlign: 'center',
-    paddingBottom: '24px',
+    paddingBottom: '28px',
+    borderTop: '1px border-dashed #E4DDD2',
   },
   footerText: {
     fontSize: '12px',
-    color: '#71717A',
+    color: '#4A5060',
     fontWeight: '600',
+    fontFamily: "'Lora', Georgia, serif",
+  },
+  footerSubtext: {
+    fontSize: '11px',
+    color: '#8A91A0',
+    marginTop: '3px',
+    fontStyle: 'italic',
   },
 };

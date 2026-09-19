@@ -7,113 +7,98 @@ import { formatDate, formatTime, formatTimestampToJakarta } from '../../utils/da
 import { SUBMISSION_STATUS, CLASS_OPTIONS } from '../../constants/classOptions';
 import MobileLayout from '../../layouts/MobileLayout';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
-import { CheckCircle, AlertTriangle, Clock, AlertCircle, User, GraduationCap, Sparkles, Heart, Check, ArrowRight, Calendar } from 'lucide-react';
+import { CheckCircle, AlertTriangle, Clock, AlertCircle, User, GraduationCap, Heart, Check, Calendar } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
 const styles = {
   container: {
-    padding: '8px 4px 24px 4px',
+    padding: '4px 0 24px 0',
     display: 'flex',
     flexDirection: 'column',
-    gap: '18px',
-    minHeight: '100%',
+    gap: '20px',
   },
-  sessionBanner: {
-    background: 'linear-gradient(135deg, #7C3AED 0%, #E10078 100%)',
-    borderRadius: '20px',
-    padding: '20px 24px',
-    color: '#FFFFFF',
-    boxShadow: '0 12px 24px -6px rgba(124, 58, 237, 0.35)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '6px',
+
+  /* ── Section 9: Session Event Poster Card ── */
+  sessionPoster: {
+    backgroundColor: '#EDE8F5', // Dusty Lavender soft pastel paper panel
+    borderRadius: '16px',
+    padding: '20px 22px',
+    border: '1.5px solid #DDD6E8',
+    boxShadow: '0 2px 8px rgba(44, 48, 62, 0.04)',
     position: 'relative',
     overflow: 'hidden',
   },
-  sessionBannerTag: {
+  posterHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '8px',
+  },
+  posterCategory: {
+    fontSize: '11px',
+    fontWeight: '700',
+    color: '#6B5E82',
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    fontFamily: "'Plus Jakarta Sans', sans-serif",
+  },
+  posterTitle: {
+    fontSize: '20px',
+    fontWeight: '700',
+    color: '#2C303E',
+    lineHeight: '1.3',
+    margin: '0 0 8px 0',
+  },
+  posterMeta: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '6px',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    backdropFilter: 'blur(8px)',
-    padding: '4px 12px',
-    borderRadius: '20px',
-    fontSize: '11px',
-    fontWeight: '700',
-    letterSpacing: '0.04em',
-    textTransform: 'uppercase',
-    width: 'fit-content',
-    marginBottom: '2px',
-  },
-  title: {
-    fontSize: '22px',
-    fontWeight: '800',
-    color: '#FFFFFF',
-    lineHeight: '1.25',
-    margin: 0,
-  },
-  subtitle: {
     fontSize: '13px',
-    color: 'rgba(255, 255, 255, 0.9)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    margin: 0,
     fontWeight: '500',
+    color: '#5E6578',
+    backgroundColor: '#F7F4FB',
+    padding: '5px 12px',
+    borderRadius: '8px',
+    border: '1px solid #E2DCEB',
   },
-  journeySteps: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-    backdropFilter: 'blur(12px)',
-    borderRadius: '16px',
-    padding: '10px 16px',
-    border: '1px solid rgba(255, 255, 255, 0.9)',
-    boxShadow: '0 4px 14px rgba(0, 0, 0, 0.03)',
-  },
-  journeyStepItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    fontSize: '12px',
-    fontWeight: '600',
-    color: '#6B7280',
-  },
-  journeyStepActive: {
-    color: '#7C3AED',
-  },
-  stepBadge: {
-    width: '20px',
-    height: '20px',
-    borderRadius: '10px',
-    backgroundColor: 'rgba(124, 58, 237, 0.12)',
-    color: '#7C3AED',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '11px',
-    fontWeight: '700',
-  },
-  card: {
+
+  /* ── Section 10: Form Registration Card ── */
+  formCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: '24px',
+    borderRadius: '16px',
     padding: '24px 20px',
-    boxShadow: '0 12px 32px -8px rgba(124, 58, 237, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02)',
-    border: '1px solid rgba(124, 58, 237, 0.08)',
+    border: '1.5px solid #E2DCD3',
+    boxShadow: '0 2px 10px rgba(44, 48, 62, 0.04)',
+  },
+  formHeader: {
+    borderBottom: '1px solid #EFEAE1',
+    paddingBottom: '14px',
+    marginBottom: '20px',
+  },
+  formHeaderTitle: {
+    fontSize: '16px',
+    fontWeight: '700',
+    color: '#2C303E',
+    margin: '0 0 2px 0',
+  },
+  formHeaderSubtitle: {
+    fontSize: '12px',
+    color: '#767D8F',
+    margin: 0,
   },
   formGroup: {
-    marginBottom: '20px',
+    marginBottom: '18px',
   },
   label: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    fontSize: '13px',
+    gap: '6px',
+    fontSize: '12px',
     fontWeight: '700',
-    color: '#1E1B4B',
+    color: '#3E4454',
     marginBottom: '8px',
+    letterSpacing: '0.02em',
     textTransform: 'uppercase',
-    letterSpacing: '0.03em',
   },
   inputWrapper: {
     position: 'relative',
@@ -122,96 +107,92 @@ const styles = {
   },
   inputIcon: {
     position: 'absolute',
-    left: '16px',
-    color: '#9CA3AF',
+    left: '14px',
+    color: '#8A91A0',
     pointerEvents: 'none',
   },
   input: {
     width: '100%',
-    height: '52px',
-    padding: '0 16px 0 46px',
-    borderRadius: '14px',
-    border: '1.5px solid #E5E7EB',
-    backgroundColor: '#FAF9FE',
+    height: '48px',
+    padding: '0 14px 0 42px',
+    borderRadius: '10px',
+    border: '1.5px solid #DED6CB',
+    backgroundColor: '#FFFDF9',
     fontSize: '15px',
     fontWeight: '500',
-    color: '#1E1B4B',
+    color: '#2C303E',
     boxSizing: 'border-box',
     outline: 'none',
-    transition: 'all 0.2s ease',
   },
   select: {
     width: '100%',
-    height: '52px',
-    padding: '0 16px 0 46px',
-    borderRadius: '14px',
-    border: '1.5px solid #E5E7EB',
-    backgroundColor: '#FAF9FE',
+    height: '48px',
+    padding: '0 14px 0 42px',
+    borderRadius: '10px',
+    border: '1.5px solid #DED6CB',
+    backgroundColor: '#FFFDF9',
     fontSize: '15px',
     fontWeight: '500',
-    color: '#1E1B4B',
+    color: '#2C303E',
     boxSizing: 'border-box',
     outline: 'none',
     appearance: 'none',
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
   },
+
+  /* ── Section 4: Gender Muted Pastel Palette ── */
   genderContainer: {
     display: 'flex',
-    gap: '12px',
+    gap: '10px',
   },
   genderBtn: {
     flex: 1,
-    height: '52px',
-    borderRadius: '16px',
-    border: '1.5px solid #E5E7EB',
-    backgroundColor: '#FAF9FE',
-    fontSize: '15px',
+    height: '46px',
+    borderRadius: '10px',
+    border: '1.5px solid #DED6CB',
+    backgroundColor: '#F5EFF0',
+    fontSize: '14px',
     fontWeight: '600',
-    color: '#4B5563',
+    color: '#5E6578',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
-    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+    gap: '6px',
   },
   genderBtnMaleActive: {
     flex: 1,
-    height: '52px',
-    borderRadius: '16px',
+    height: '46px',
+    borderRadius: '10px',
     border: 'none',
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#5B7B9A', // Soft Muted Powder Blue
     color: '#FFFFFF',
-    fontSize: '15px',
+    fontSize: '14px',
     fontWeight: '700',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
-    boxShadow: '0 8px 18px -4px rgba(124, 58, 237, 0.4)',
-    transform: 'translateY(-1px)',
+    gap: '6px',
   },
   genderBtnFemaleActive: {
     flex: 1,
-    height: '52px',
-    borderRadius: '16px',
+    height: '46px',
+    borderRadius: '10px',
     border: 'none',
-    backgroundColor: '#E10078',
+    backgroundColor: '#C87B8A', // Soft Muted Dusty Rose
     color: '#FFFFFF',
-    fontSize: '15px',
+    fontSize: '14px',
     fontWeight: '700',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
-    boxShadow: '0 8px 18px -4px rgba(225, 0, 120, 0.4)',
-    transform: 'translateY(-1px)',
+    gap: '6px',
   },
+
   errorText: {
-    color: '#EF4444',
+    color: '#C85A5A',
     fontSize: '12px',
     fontWeight: '500',
     marginTop: '6px',
@@ -219,29 +200,31 @@ const styles = {
     alignItems: 'center',
     gap: '6px',
   },
+
+  /* ── Section 11: Button (Muted Terracotta / Solid Color) ── */
   submitBtn: {
     width: '100%',
-    height: '54px',
-    borderRadius: '16px',
-    background: 'linear-gradient(135deg, #7C3AED 0%, #E10078 100%)',
+    height: '50px',
+    borderRadius: '12px',
+    backgroundColor: '#C87A68', // Muted Terracotta
     color: '#FFFFFF',
-    fontSize: '16px',
+    fontSize: '15px',
     fontWeight: '700',
     border: 'none',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '10px',
+    gap: '8px',
     marginTop: '8px',
-    boxShadow: '0 8px 24px -4px rgba(124, 58, 237, 0.35)',
-    transition: 'all 0.25s ease',
+    letterSpacing: '0.01em',
   },
   submitBtnDisabled: {
-    opacity: 0.7,
+    opacity: 0.6,
     cursor: 'not-allowed',
-    boxShadow: 'none',
   },
+
+  /* ── States: Success / Duplicate / Closed ── */
   viewContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -250,104 +233,105 @@ const styles = {
     padding: '32px 20px',
     textAlign: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: '24px',
-    boxShadow: '0 12px 32px -8px rgba(124, 58, 237, 0.1)',
-    border: '1px solid rgba(124, 58, 237, 0.08)',
+    borderRadius: '16px',
+    border: '1.5px solid #E2DCD3',
+    boxShadow: '0 2px 10px rgba(44, 48, 62, 0.04)',
   },
   iconWrapper: {
-    width: '84px',
-    height: '84px',
-    borderRadius: '42px',
+    width: '72px',
+    height: '72px',
+    borderRadius: '36px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: '20px',
+    marginBottom: '18px',
   },
   iconSuccess: {
-    backgroundColor: 'rgba(16, 185, 129, 0.12)',
-    color: '#10B981',
-    boxShadow: '0 10px 24px -4px rgba(16, 185, 129, 0.25)',
+    backgroundColor: '#E8EFEA',
+    color: '#4B7258',
+    border: '1px solid #C5DACB',
   },
   iconWarning: {
-    backgroundColor: 'rgba(245, 158, 11, 0.12)',
-    color: '#F59E0B',
+    backgroundColor: '#FBF3E4',
+    color: '#B8862A',
+    border: '1px solid #EAD8B5',
   },
   iconClosed: {
-    backgroundColor: 'rgba(107, 114, 128, 0.12)',
-    color: '#6B7280',
+    backgroundColor: '#EFEAE1',
+    color: '#6E7585',
+    border: '1px solid #DED7CB',
   },
   iconError: {
-    backgroundColor: 'rgba(239, 68, 68, 0.12)',
-    color: '#EF4444',
+    backgroundColor: '#F8ECF0',
+    color: '#C85A5A',
+    border: '1px solid #E8C5CE',
   },
   viewTitle: {
-    fontSize: '22px',
-    fontWeight: '800',
-    color: '#1E1B4B',
+    fontSize: '20px',
+    fontWeight: '700',
+    color: '#2C303E',
     marginBottom: '8px',
   },
   viewText: {
     fontSize: '14px',
-    color: '#6B7280',
-    marginBottom: '24px',
+    color: '#5E6578',
+    marginBottom: '22px',
     lineHeight: '1.5',
-    fontWeight: '500',
   },
   detailsBox: {
-    backgroundColor: '#FAF8FC',
-    borderRadius: '16px',
-    padding: '20px',
+    backgroundColor: '#F9F6F0',
+    borderRadius: '12px',
+    padding: '18px',
     width: '100%',
-    marginBottom: '24px',
+    marginBottom: '22px',
     textAlign: 'left',
-    border: '1px solid rgba(124, 58, 237, 0.08)',
+    border: '1px solid #E4DDD2',
   },
   detailRow: {
     display: 'flex',
     justifyContent: 'space-between',
-    padding: '8px 0',
-    borderBottom: '1px dashed #E5E7EB',
+    padding: '7px 0',
+    borderBottom: '1px dashed #E2DCD3',
   },
   detailRowLast: {
     display: 'flex',
     justifyContent: 'space-between',
-    paddingTop: '8px',
+    paddingTop: '7px',
   },
   detailLabel: {
-    color: '#6B7280',
+    color: '#6E7585',
     fontSize: '13px',
     fontWeight: '500',
   },
   detailValue: {
-    color: '#1E1B4B',
+    color: '#2C303E',
     fontWeight: '700',
-    fontSize: '14px',
+    fontSize: '13px',
   },
   actionBtn: {
     width: '100%',
-    height: '52px',
-    borderRadius: '16px',
-    background: 'linear-gradient(135deg, #7C3AED 0%, #E10078 100%)',
+    height: '48px',
+    borderRadius: '10px',
+    backgroundColor: '#5C7463', // Muted Deep Sage
     color: '#FFFFFF',
-    fontSize: '15px',
+    fontSize: '14px',
     fontWeight: '700',
     border: 'none',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '8px',
-    boxShadow: '0 8px 20px -4px rgba(124, 58, 237, 0.3)',
+    gap: '6px',
   },
   actionBtnOutline: {
     width: '100%',
-    height: '52px',
-    borderRadius: '16px',
+    height: '48px',
+    borderRadius: '10px',
     backgroundColor: 'transparent',
-    color: '#4B5563',
-    fontSize: '15px',
+    color: '#2C303E',
+    fontSize: '14px',
     fontWeight: '600',
-    border: '1.5px solid #E5E7EB',
+    border: '1.5px solid #DED6CB',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
@@ -474,8 +458,8 @@ const AttendanceSession = () => {
   if (loading) {
     return (
       <MobileLayout>
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', gap: '16px' }}>
-          <LoadingSpinner size="lg" message="Membuka presensi KOREM..." />
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', gap: '12px' }}>
+          <LoadingSpinner size="lg" message="Membuka bulletin presensi..." />
         </div>
       </MobileLayout>
     );
@@ -487,42 +471,36 @@ const AttendanceSession = () => {
         
         {view === 'form' && session && (
           <>
-            {/* Session Header Card */}
-            <div style={styles.sessionBanner} className="korem-card-entrance">
-              <div style={styles.sessionBannerTag}>
-                <Calendar size={12} /> Sesi Hari Ini
+            {/* Section 9: Session Event Poster Card */}
+            <div style={styles.sessionPoster}>
+              <div style={styles.posterHeader}>
+                <span style={styles.posterCategory}>Warta Remaja</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3V21M3 12H21" stroke="#8E83A3" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
               </div>
-              <h1 style={styles.title}>{session.name}</h1>
-              <p style={styles.subtitle}>
-                <Clock size={13} /> {formatDate(session.date)} {session.start_time ? `• ${formatTime(session.start_time)}` : ''}
-              </p>
+              <h2 style={styles.posterTitle} className="serif-font">{session.name}</h2>
+              <div style={styles.posterMeta}>
+                <Calendar size={13} style={{ color: '#8E83A3' }} />
+                <span>{formatDate(session.date)} {session.start_time ? `• ${formatTime(session.start_time)} WIB` : ''}</span>
+              </div>
             </div>
 
-            {/* Friendly Short Journey Step Indicators */}
-            <div style={styles.journeySteps} className="korem-card-entrance">
-              <div style={{ ...styles.journeyStepItem, ...(formData.name.trim().length >= 2 ? styles.journeyStepActive : {}) }}>
-                <span style={styles.stepBadge}>{formData.name.trim().length >= 2 ? <Check size={12} /> : '1'}</span>
-                Nama
+            {/* Section 10: Registration Form Card */}
+            <div style={styles.formCard}>
+              <div style={styles.formHeader}>
+                <h3 style={styles.formHeaderTitle} className="serif-font">Formulir Presensi</h3>
+                <p style={styles.formHeaderSubtitle}>Silakan lengkapi data presensi kamu di bawah ini</p>
               </div>
-              <div style={{ ...styles.journeyStepItem, ...(formData.className ? styles.journeyStepActive : {}) }}>
-                <span style={styles.stepBadge}>{formData.className ? <Check size={12} /> : '2'}</span>
-                Kelas
-              </div>
-              <div style={{ ...styles.journeyStepItem, ...(formData.gender ? styles.journeyStepActive : {}) }}>
-                <span style={styles.stepBadge}>{formData.gender ? <Check size={12} /> : '3'}</span>
-                Gender
-              </div>
-            </div>
-            
-            {/* Form Card */}
-            <div style={styles.card} className="korem-card-entrance korem-glow-card">
+
               <form onSubmit={handleSubmit}>
+                {/* Name Input */}
                 <div style={styles.formGroup}>
                   <label style={styles.label} htmlFor="attendee-name">
-                    <User size={15} style={{ color: '#7C3AED' }} /> {t('fullNameLabel')}
+                    <User size={14} style={{ color: '#5B7B9A' }} /> {t('fullNameLabel')}
                   </label>
                   <div style={styles.inputWrapper}>
-                    <User size={18} style={styles.inputIcon} />
+                    <User size={16} style={styles.inputIcon} />
                     <input
                       id="attendee-name"
                       type="text"
@@ -532,20 +510,21 @@ const AttendanceSession = () => {
                       placeholder={t('fullNamePlaceholder')}
                       style={{
                         ...styles.input,
-                        borderColor: errors.name ? '#EF4444' : formData.name ? '#7C3AED' : '#E5E7EB'
+                        borderColor: errors.name ? '#C85A5A' : '#DED6CB'
                       }}
                       disabled={submitting}
                     />
                   </div>
-                  {errors.name && <span style={styles.errorText}><AlertCircle size={14} /> {errors.name}</span>}
+                  {errors.name && <span style={styles.errorText}><AlertCircle size={13} /> {errors.name}</span>}
                 </div>
 
+                {/* Class Select */}
                 <div style={styles.formGroup}>
                   <label style={styles.label} htmlFor="attendee-class">
-                    <GraduationCap size={16} style={{ color: '#7C3AED' }} /> {t('classLabel')}
+                    <GraduationCap size={15} style={{ color: '#5B7B9A' }} /> {t('classLabel')}
                   </label>
                   <div style={styles.inputWrapper}>
-                    <GraduationCap size={18} style={styles.inputIcon} />
+                    <GraduationCap size={16} style={styles.inputIcon} />
                     <select
                       id="attendee-class"
                       name="className"
@@ -553,7 +532,7 @@ const AttendanceSession = () => {
                       onChange={handleInputChange}
                       style={{
                         ...styles.select,
-                        borderColor: errors.className ? '#EF4444' : formData.className ? '#7C3AED' : '#E5E7EB'
+                        borderColor: errors.className ? '#C85A5A' : '#DED6CB'
                       }}
                       disabled={submitting}
                     >
@@ -563,12 +542,13 @@ const AttendanceSession = () => {
                       ))}
                     </select>
                   </div>
-                  {errors.className && <span style={styles.errorText}><AlertCircle size={14} /> {errors.className}</span>}
+                  {errors.className && <span style={styles.errorText}><AlertCircle size={13} /> {errors.className}</span>}
                 </div>
 
+                {/* Gender Options */}
                 <div style={styles.formGroup}>
                   <label style={styles.label}>
-                    <Sparkles size={15} style={{ color: '#E10078' }} /> {t('genderLabel')}
+                    <Heart size={14} style={{ color: '#C87B8A' }} /> {t('genderLabel')}
                   </label>
                   <div style={styles.genderContainer}>
                     <button
@@ -588,15 +568,16 @@ const AttendanceSession = () => {
                       {t('female')}
                     </button>
                   </div>
-                  {errors.gender && <span style={styles.errorText}><AlertCircle size={14} /> {errors.gender}</span>}
+                  {errors.gender && <span style={styles.errorText}><AlertCircle size={13} /> {errors.gender}</span>}
                 </div>
 
                 {submitError && (
-                  <div style={{...styles.errorText, marginBottom: '16px', fontSize: '13px', padding: '10px 14px', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)'}}>
-                    <AlertCircle size={16} /> {submitError}
+                  <div style={{...styles.errorText, marginBottom: '16px', fontSize: '12px', padding: '9px 12px', backgroundColor: '#F8ECF0', borderRadius: '8px', border: '1px solid #E8C5CE'}}>
+                    <AlertCircle size={15} /> {submitError}
                   </div>
                 )}
 
+                {/* Section 11: Muted Terracotta Submit Button */}
                 <button 
                   type="submit" 
                   style={{
@@ -605,11 +586,7 @@ const AttendanceSession = () => {
                   }}
                   disabled={submitting}
                 >
-                  {submitting ? t('submitting') : (
-                    <>
-                      {t('submitAttendance')} <ArrowRight size={18} />
-                    </>
-                  )}
+                  {submitting ? t('submitting') : t('submitAttendance')}
                 </button>
               </form>
             </div>
@@ -618,14 +595,14 @@ const AttendanceSession = () => {
 
         {/* Success State */}
         {view === 'success' && attendeeInfo && (
-          <div style={styles.viewContainer} className="korem-card-entrance">
-            <div style={{...styles.iconWrapper, ...styles.iconSuccess}} className="korem-checkmark-pop">
-              <CheckCircle size={44} />
+          <div style={styles.viewContainer}>
+            <div style={{...styles.iconWrapper, ...styles.iconSuccess}}>
+              <CheckCircle size={38} />
             </div>
-            <h2 style={styles.viewTitle}>{t('successTitle')}</h2>
+            <h2 style={styles.viewTitle} className="serif-font">{t('successTitle')}</h2>
             <p style={styles.viewText}>
-              Terima kasih, <strong>{attendeeInfo.firstName}</strong>! 🙏<br/>
-              Senang sekali kamu bisa bersekutu bersama KOREM GKI Pamulang hari ini.
+              Terima kasih, <strong>{attendeeInfo.firstName}</strong>!<br/>
+              Presensi kamu telah tercatat untuk persekutuan hari ini.
             </p>
             
             <div style={styles.detailsBox}>
@@ -638,7 +615,7 @@ const AttendanceSession = () => {
                 <span style={styles.detailValue}>{session ? formatDate(session.date) : ''}</span>
               </div>
               <div style={styles.detailRow}>
-                <span style={styles.detailLabel}>Waktu Absen</span>
+                <span style={styles.detailLabel}>Waktu Presensi</span>
                 <span style={styles.detailValue}>{formatTimestampToJakarta(attendeeInfo.timestamp)}</span>
               </div>
               <div style={styles.detailRowLast}>
@@ -648,18 +625,18 @@ const AttendanceSession = () => {
             </div>
             
             <button onClick={resetForm} style={styles.actionBtn}>
-              Selesai <Check size={18} />
+              Selesai <Check size={16} />
             </button>
           </div>
         )}
 
         {/* Duplicate State */}
         {view === 'duplicate' && (
-          <div style={styles.viewContainer} className="korem-card-entrance">
+          <div style={styles.viewContainer}>
             <div style={{...styles.iconWrapper, ...styles.iconWarning}}>
-              <AlertTriangle size={44} />
+              <AlertTriangle size={38} />
             </div>
-            <h2 style={styles.viewTitle}>{t('duplicateTitle')}</h2>
+            <h2 style={styles.viewTitle} className="serif-font">{t('duplicateTitle')}</h2>
             <p style={styles.viewText}>{t('duplicateMessage')}</p>
             
             <button onClick={() => setView('form')} style={styles.actionBtnOutline}>
@@ -670,22 +647,22 @@ const AttendanceSession = () => {
 
         {/* Closed State */}
         {view === 'closed' && (
-          <div style={styles.viewContainer} className="korem-card-entrance">
+          <div style={styles.viewContainer}>
             <div style={{...styles.iconWrapper, ...styles.iconClosed}}>
-              <Clock size={44} />
+              <Clock size={38} />
             </div>
-            <h2 style={styles.viewTitle}>{t('closedTitle')}</h2>
+            <h2 style={styles.viewTitle} className="serif-font">{t('closedTitle')}</h2>
             <p style={styles.viewText}>{t('closedMessage')}</p>
           </div>
         )}
 
         {/* Not Found State */}
         {view === 'not-found' && (
-          <div style={styles.viewContainer} className="korem-card-entrance">
+          <div style={styles.viewContainer}>
             <div style={{...styles.iconWrapper, ...styles.iconError}}>
-              <AlertCircle size={44} />
+              <AlertCircle size={38} />
             </div>
-            <h2 style={styles.viewTitle}>{t('notFoundTitle')}</h2>
+            <h2 style={styles.viewTitle} className="serif-font">{t('notFoundTitle')}</h2>
             <p style={styles.viewText}>{t('notFoundMessage')}</p>
           </div>
         )}

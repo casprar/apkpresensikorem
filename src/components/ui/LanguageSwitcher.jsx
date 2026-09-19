@@ -17,22 +17,20 @@ export default function LanguageSwitcher({ style = {} }) {
         display: 'inline-flex',
         alignItems: 'center',
         gap: '6px',
-        padding: '6px 12px',
+        padding: '5px 12px',
         borderRadius: '20px',
-        border: '1px solid var(--border-color, #E2E8F0)',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        color: '#1E293B',
-        fontSize: '13px',
+        border: '1px solid #DED7CB',
+        backgroundColor: '#EFEAE1',
+        color: '#4A5060',
+        fontSize: '12px',
         fontWeight: '600',
         cursor: 'pointer',
-        boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
-        transition: 'all 0.2s ease',
         userSelect: 'none',
         ...style
       }}
     >
       <span>{language === 'id' ? '🇮🇩 ID' : '🇬🇧 EN'}</span>
-      <span style={{ opacity: 0.4, fontSize: '11px' }}>⇄</span>
+      <span style={{ opacity: 0.5, fontSize: '11px' }}>⇄</span>
     </button>
   );
 }
