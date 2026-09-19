@@ -566,9 +566,6 @@ const AttendanceSession = () => {
           <>
             {/* Session Event Poster Card */}
             <div style={styles.sessionPoster}>
-              <div style={styles.posterHeader}>
-                <span style={styles.posterCategory}>Warta Remaja</span>
-              </div>
               <h2 style={styles.posterTitle} className="serif-font">{session.name}</h2>
               <div style={styles.posterMeta}>
                 <span>{formatDate(session.date)} {session.start_time ? `• ${formatTime(session.start_time)} WIB` : ''}</span>
